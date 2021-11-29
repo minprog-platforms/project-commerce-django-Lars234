@@ -1,8 +1,10 @@
+from typing_extensions import Required
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
 from .models import User
 
@@ -61,3 +63,15 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+    
+def new_listing(request):
+    return render(request, "auctions/new_listing.html", {
+        "form": NewListingForm()
+    })
+
+class NewListingForm(forms.Form):
+    title = forms.CharField(max_length=64, required=True)
+    description = forms.CharField(max_length=256, widget=forms.Textarea(attrs={'rows': 5, 'cols': 40}))
+    start_bid = forms.DecimalField(decimal_places=2, max_digits=16, required=True)
+    image = forms.URLField(required=False)
+    category = forms.CharField(max_length=64, required=False)
