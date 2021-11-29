@@ -9,17 +9,26 @@ class User(AbstractUser):
 class Auction_listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
-    start_bid = models.DecimalField(decimal_places=2)
+    start_bid = models.DecimalField(decimal_places=2, max_digits=16)
     listed_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="provider")
     category = models.CharField(max_length=64)
     image = models.URLField()
 
+    def __str__(self):
+        return f"{self.title}: {self.description}"
+
 class Bid(models.Model):
-    value = models.DecimalField(decimal_places=2)
-    by = models.ForeignKey(User, related_name="bidder")
-    bid_on = models.ForeignKey(Auction_listing, )
+    value = models.DecimalField(decimal_places=2, max_digits=16)
+    by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidder")
+    bid_on = models.ForeignKey(Auction_listing, on_delete=models.CASCADE, related_name="listed")
+
+    def __str__(self):
+        return f"{self.value} bid by {self.by}"
 
 class Comment(models.Model):
-    on = models.ForeignKey(Auction_listing, related_name="listing")
-    by = models.ForeignKey(User, related_name="commenter")
+    on = models.ForeignKey(Auction_listing, on_delete=models.CASCADE, related_name="listing")
+    by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commenter")
     comment = models.TextField()
+
+    def __str__(self):
+        return f"{self.comment} by {self.by} on {self.on}"
