@@ -119,6 +119,12 @@ def listing(request, listing_id):
         "listed_by": listed_by
     })
 
+def categories(request):
+    pass
+
+def watchlist(request):
+    pass
+
 class NewListingForm(forms.Form):
     title = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=256, widget=forms.Textarea(attrs={'rows': 5, 'cols': 40}))
