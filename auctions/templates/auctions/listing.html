@@ -25,13 +25,18 @@
         <h5>Minimal bid: ${{ listing.start_bid }}</h5>
         No bids made yet        
         {% endif %}
+        <p style="color: red">
+            {{ errormessage }}
+        </p>
     </div>
     
     <div>
         <form action="{% url 'listing' listing.id %}" method="post">
             {% csrf_token %}
-            {{ form.value }}
-            <input type="submit">
+            {{ form.value }} 
+            <p>
+                <input type="submit">
+            </p>
         </form>
     </div>
 

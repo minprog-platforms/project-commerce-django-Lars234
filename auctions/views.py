@@ -89,7 +89,8 @@ def new_listing(request):
         )
         new_listing.save()
 
-        # TODO: send user to the new page
+        # send user to the new page
+        return HttpResponseRedirect(reverse("listing", args=(str(new_listing.id))))
 
     # send an empty form
     return render(request, "auctions/new_listing.html", {
@@ -97,19 +98,43 @@ def new_listing(request):
     })
 
 def listing(request, listing_id):
+    # first get some data
+    all_bids = Bid.objects.filter(bid_on_id=listing_id)
+    highest_bid= all_bids.order_by("value").last()
+    
+    listed_by = Auction_listing.objects.get(id=listing_id).listed_by
+    errormessage = ""
     
     if request.method == "POST":
-        # TODO:
-        pass
+        new_bid_value = request.POST["value"]
 
-    all_bids = Bid.objects.filter(bid_on_id=listing_id)
-    highest_bid_id = all_bids.order_by("value").first()
-    if highest_bid_id:
-        highest_bid = Bid.objects.get(bid_id = highest_bid_id)
-    else:
-        highest_bid = ""
+        # if the bid is too low, send an error message
+        if highest_bid:
+            current_bid = highest_bid.value
+        else:
+            current_bid = Auction_listing.objects.get(id=listing_id).start_bid
 
-    listed_by = Auction_listing.objects.get(id=listing_id).listed_by
+        if float(new_bid_value) < float(current_bid):
+            errormessage = "A bid must be higher than the previous bid and higher than the starting bid"
+            return render(request, "auctions/listing.html", {
+                "listing": Auction_listing.objects.get(id=listing_id),
+                "highest_bid": highest_bid,
+                "num_bids": len(all_bids),
+                "form": NewBidForm(),
+                "listed_by": listed_by,
+                "errormessage": errormessage,
+            })
+        
+        else:
+            # the bid is valid, so add it to this listing
+            new_bid = Bid(
+                value = new_bid_value,
+                by = User.objects.get(pk=request.user.id),
+                bid_on = Auction_listing.objects.get(id=listing_id)
+            )
+
+            new_bid.save()
+            return HttpResponseRedirect(reverse("listing", args=(listing_id)))
 
     return render(request, "auctions/listing.html", {
         "listing": Auction_listing.objects.get(id=listing_id),
