@@ -30,6 +30,7 @@
         </p>
     </div>
     
+    {% if user.id %}
     <div>
         <form action="{% url 'listing' listing.id %}" method="post">
             {% csrf_token %}
@@ -39,6 +40,7 @@
             </p>
         </form>
     </div>
+    {% endif %}
 
     <div>
         <h5>Details</h5>
