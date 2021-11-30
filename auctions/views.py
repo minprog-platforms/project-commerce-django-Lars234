@@ -191,10 +191,8 @@ def watchlist(request):
 
 def toggle_watchlist(request, listing_id):
     if request.method == "POST":
-        print("reached 1")
         if Watchlist.objects.filter(watchlisted_item_id=listing_id).filter(watchlisted_by_id=request.user.id):
             # the user want to toggle it off
-            print("reached 2")
             Watchlist.objects.filter(watchlisted_item_id=listing_id).filter(watchlisted_by_id=request.user.id).delete()
         else:
             # the user wants to toggle it on
@@ -206,6 +204,29 @@ def toggle_watchlist(request, listing_id):
 
     return HttpResponseRedirect(reverse("listing", args=(listing_id)))
 
+def categories_list(request):
+    cats = set()
+    for listing in Auction_listing.objects.filter():
+        cats.add(listing.category)
+    
+    return render(request, "auctions/categories_list.html", {
+        "categories": cats
+    })
+
+def categories(request, category):
+    # give a list with all listings that have this category
+    listings = []
+    highest_bids = []
+    for listing in Auction_listing.objects.filter():
+        highest_bids.append(Bid.objects.filter(bid_on_id=listing.id).order_by("value").last())
+        if listing.category == category:
+            listings.append(listing)        
+    
+    return render(request, "auctions/categories.html", {
+        "listings": listings,
+        "category": category,
+        "highest_bids": highest_bids
+    })
 
 class NewListingForm(forms.Form):
     title = forms.CharField(max_length=64, required=True)
