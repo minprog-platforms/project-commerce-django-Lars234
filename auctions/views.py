@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-from .models import User, Auction_listing, Bid, Comment
+from .models import User, Auction_listing, Bid, Comment, Watchlist
 
 
 def index(request):
@@ -171,15 +171,41 @@ def comment(request, listing_id):
         )
 
         new_comment.save()
-
-
     return HttpResponseRedirect(reverse("listing", args=(listing_id)))
 
 def categories(request):
     pass
 
 def watchlist(request):
-    pass
+    highest_bids = []
+    for listing in Auction_listing.objects.filter():
+        highest_bids.append(Bid.objects.filter(bid_on_id=listing.id).order_by("value").last())
+
+    # send the listings that are on the watchlist
+    listings = Watchlist.objects.filter(watchlisted_by_id=request.user.id)
+
+    return render(request, "auctions/watchlist.html", {
+        "listings": listings,
+        "highest_bids": highest_bids
+    })
+
+def toggle_watchlist(request, listing_id):
+    if request.method == "POST":
+        print("reached 1")
+        if Watchlist.objects.filter(watchlisted_item_id=listing_id).filter(watchlisted_by_id=request.user.id):
+            # the user want to toggle it off
+            print("reached 2")
+            Watchlist.objects.filter(watchlisted_item_id=listing_id).filter(watchlisted_by_id=request.user.id).delete()
+        else:
+            # the user wants to toggle it on
+            new_watchlist = Watchlist(
+                watchlisted_by=request.user,
+                watchlisted_item=Auction_listing.objects.get(id=listing_id)
+            )
+            new_watchlist.save()
+
+    return HttpResponseRedirect(reverse("listing", args=(listing_id)))
+
 
 class NewListingForm(forms.Form):
     title = forms.CharField(max_length=64, required=True)
