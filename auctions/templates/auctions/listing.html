@@ -54,4 +54,28 @@
         </ul>
     </div>
 
+    <div>
+        <h5>Comments</h5>
+        <h6>Add a comment</h6>
+        <form action="{% url 'comment' listing.id %}" method="post">
+            {% csrf_token %}
+            {{ form_comment.text }} 
+            <p>
+                <input type="submit">
+            </p>
+        </form>
+        <ul class="list-group">
+            {% for comment in comments%}
+            <li class="list-group-item">
+                <b>{{ comment.by.username }}</b> said:
+                <p>{{ comment.comment }}</p>
+            </li>
+            {% empty %}
+            <li class="list-group-item">
+                No comments
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
 {% endblock %}

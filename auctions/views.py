@@ -112,6 +112,8 @@ def listing(request, listing_id):
     
     listed_by = Auction_listing.objects.get(id=listing_id).listed_by
     errormessage = ""
+
+    comments = Comment.objects.filter(on_id=listing_id)
     
     if request.method == "POST":
         new_bid_value = request.POST["value"]
@@ -131,6 +133,8 @@ def listing(request, listing_id):
                 "form": NewBidForm(),
                 "listed_by": listed_by,
                 "errormessage": errormessage,
+                "form_comment": NewCommentForm(),
+                "comments": comments
             })
         
         else:
@@ -149,8 +153,27 @@ def listing(request, listing_id):
         "highest_bid": highest_bid,
         "num_bids": len(all_bids),
         "form": NewBidForm(),
-        "listed_by": listed_by
+        "listed_by": listed_by,
+        "form_comment": NewCommentForm(),
+        "comments": comments
     })
+
+def comment(request, listing_id):
+    if request.method == "POST":
+        # add the comment to the database
+        writer = request.user
+        text = request.POST["text"]
+
+        new_comment = Comment(
+            on=Auction_listing.objects.get(id=listing_id),
+            by=writer,
+            comment=text
+        )
+
+        new_comment.save()
+
+
+    return HttpResponseRedirect(reverse("listing", args=(listing_id)))
 
 def categories(request):
     pass
@@ -167,3 +190,6 @@ class NewListingForm(forms.Form):
 
 class NewBidForm(forms.Form):
     value = forms.DecimalField(decimal_places=2, max_digits=16, required=True)
+
+class NewCommentForm(forms.Form):
+    text = forms.CharField(max_length=256, required=True)
