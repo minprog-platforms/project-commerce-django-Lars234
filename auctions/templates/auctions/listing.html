@@ -1,0 +1,50 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Listing: {{ listing.title }}</h2>
+
+    {% if listing.image %}
+        <div>
+            <img src="{{ listing.image }}" alt="image of the listed item">
+        </div>
+    {% else %}
+        <div>
+            No image uploaded
+        </div>
+    {% endif %}
+
+    <div>
+        {{ listing.description }}
+    </div>
+
+    <div>
+        {% if highest_bid %}
+        <h5>${{ highest_bid.value }}</h5>
+        {{ num_bids }} bids so far. 
+        {% else %}
+        <h5>Minimal bid: ${{ listing.start_bid }}</h5>
+        No bids made yet        
+        {% endif %}
+    </div>
+    
+    <div>
+        <form action="{% url 'listing' listing.id %}" method="post">
+            {% csrf_token %}
+            {{ form.value }}
+            <input type="submit">
+        </form>
+    </div>
+
+    <div>
+        <h5>Details</h5>
+        <ul>
+            <li>Listed by: {{ listed_by.username }}</li>
+            {% if listing.category %}
+                <li>Category: {{ listing.category }}</li>
+            {% else %}
+                <li>Category: No category selected</li>
+            {% endif %}
+        </ul>
+    </div>
+
+{% endblock %}

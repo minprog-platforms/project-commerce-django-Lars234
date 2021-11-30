@@ -3,7 +3,7 @@
 {% block body %}
     <h2>Create Listing</h2>
 
-    <form action="">
+    <form action="{% url 'new_listing' %}" method="post">
         {% csrf_token %}
         <div>
             <p><b>Title:</b>
@@ -25,8 +25,6 @@
                 <div>{{ form.category }}</div>
             </p>
         </div>
-
-
         <input type="submit">
     </form>
 
