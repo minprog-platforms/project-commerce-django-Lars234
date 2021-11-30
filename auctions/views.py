@@ -11,7 +11,9 @@ from .models import User, Auction_listing, Bid, Comment
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        "listings": Auction_listing.objects.filter()
+    })
 
 
 def login_view(request):
