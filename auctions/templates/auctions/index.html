@@ -13,7 +13,14 @@
             <div class="card-body">
                 <h4 class="card-title">{{ listing.title }}</h4>
                 <p class="card-text">{{ listing.description }}</p>
-                <p class="card-text">Current price: ${{ listing.start_bid }}</p>
+                <p class="card-text">
+                    Current price: $
+                    {% for bid in highest_bids %}
+                        {% if bid.bid_on_id == listing.id %}
+                            {{ bid.value }}
+                        {% endif %} 
+                    {% endfor %}
+                </p>
                 <a href="/listing/{{ listing.id }}" class="btn btn-primary">See listing</a>
             </div>
         </div>

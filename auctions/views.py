@@ -11,8 +11,14 @@ from .models import User, Auction_listing, Bid, Comment
 
 
 def index(request):
+    # get all the highest bids
+    highest_bids = []
+    for listing in Auction_listing.objects.filter():
+        highest_bids.append(Bid.objects.filter(bid_on_id=listing.id).order_by("value").last())
+
     return render(request, "auctions/index.html", {
-        "listings": Auction_listing.objects.filter()
+        "listings": Auction_listing.objects.filter(),
+        "highest_bids": highest_bids
     })
 
 
