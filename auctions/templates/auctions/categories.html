@@ -17,7 +17,6 @@
                 <p class="card-text">
                     Current price: $
                     {% for bid in highest_bids %}
-                    yes
                         {% if bid.bid_on_id == listing.watchlisted_item.id %}
                             {% if bid.value %}
                                 {{ bid.value }}

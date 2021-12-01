@@ -185,9 +185,7 @@ def watchlist(request):
     highest_bids = []
     highest_bids_ids = []
     for listing in listings:
-        print(listing)
-        high_bid = Bid.objects.filter(bid_on_id=listing.watchlisted_item_id).order_by("value").last()
-        print(high_bid)
+        high_bid = Bid.objects.filter(bid_on_id=listing.watchlisted_item.id).order_by("value").last()
         if high_bid:
             highest_bids.append(high_bid)
             highest_bids_ids.append(high_bid.bid_on_id)
