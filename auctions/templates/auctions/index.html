@@ -18,9 +18,14 @@
                     Current price: $
                     {% for bid in highest_bids %}
                         {% if bid.bid_on_id == listing.id %}
-                            {{ bid.value }}
-                        {% endif %} 
+                            {% if bid.value %}
+                                {{ bid.value }}
+                            {% endif %}
+                        {% endif %}
                     {% endfor %}
+                    {% if not listing.id in highest_bids_ids  %}
+                        {{ listing.start_bid }}
+                    {% endif %}
                 </p>
                 <a href="/listing/{{ listing.id }}" class="btn btn-primary">See listing</a>
             </div>

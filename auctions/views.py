@@ -13,12 +13,17 @@ from .models import User, Auction_listing, Bid, Comment, Watchlist
 def index(request):
     # get all the highest bids
     highest_bids = []
+    highest_bids_ids = []
     for listing in Auction_listing.objects.filter():
-        highest_bids.append(Bid.objects.filter(bid_on_id=listing.id).order_by("value").last())
+        high_bid = Bid.objects.filter(bid_on_id=listing.id).order_by("value").last()
+        if high_bid:
+            highest_bids.append(high_bid)
+            highest_bids_ids.append(high_bid.bid_on_id)
 
     return render(request, "auctions/index.html", {
         "listings": Auction_listing.objects.filter(),
-        "highest_bids": highest_bids
+        "highest_bids": highest_bids,
+        "highest_bids_ids": highest_bids_ids
     })
 
 
@@ -173,9 +178,6 @@ def comment(request, listing_id):
         new_comment.save()
     return HttpResponseRedirect(reverse("listing", args=(listing_id)))
 
-def categories(request):
-    pass
-
 def watchlist(request):
     highest_bids = []
     for listing in Auction_listing.objects.filter():
@@ -226,15 +228,20 @@ def categories(request, category):
     # give a list with all listings that have this category
     listings = []
     highest_bids = []
+    highest_bids_ids = []
     for listing in Auction_listing.objects.filter():
-        highest_bids.append(Bid.objects.filter(bid_on_id=listing.id).order_by("value").last())
+        high_bid = Bid.objects.filter(bid_on_id=listing.id).order_by("value").last()
+        if high_bid:
+            highest_bids.append(high_bid)
+            highest_bids_ids.append(high_bid.bid_on_id)
         if listing.category == category:
             listings.append(listing)
 
     return render(request, "auctions/categories.html", {
         "listings": listings,
         "category": category,
-        "highest_bids": highest_bids
+        "highest_bids": highest_bids,
+        "highest_bids_ids": highest_bids_ids
     })
 
 class NewListingForm(forms.Form):
