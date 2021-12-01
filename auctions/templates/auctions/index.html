@@ -4,6 +4,7 @@
     <h2>Active Listings</h2>
     <ul class="list-group">
     {% for listing in listings %}
+    {% if listing.is_open_for_bids %}
         <div class="card" style="width:250px">
             {% if listing.image %}
                 <img class="card-img-left" src="{{ listing.image }}" alt="image of listing">
@@ -24,6 +25,7 @@
                 <a href="/listing/{{ listing.id }}" class="btn btn-primary">See listing</a>
             </div>
         </div>
+    {% endif %}
     {% empty %}
         <h5>No listings</h5>
     {% endfor %}

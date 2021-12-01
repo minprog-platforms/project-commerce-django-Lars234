@@ -13,6 +13,7 @@ class Auction_listing(models.Model):
     listed_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="provider")
     category = models.CharField(max_length=64)
     image = models.URLField()
+    is_open_for_bids = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.title}: {self.description}"

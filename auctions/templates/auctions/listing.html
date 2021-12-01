@@ -9,6 +9,10 @@
         </form>
     {% endif %}
 
+    {% if not listing.is_open_for_bids and highest_bid.by.id is user.id %}
+        <h4 style="color: green">You have won this auction!</h4>
+    {% endif %}
+
     {% if listing.image %}
         <div>
             <img src="{{ listing.image }}" alt="image of the listed item">
@@ -26,7 +30,10 @@
     <div>
         {% if highest_bid %}
         <h5>${{ highest_bid.value }}</h5>
-        {{ num_bids }} bids so far. 
+        {{ num_bids }} bids so far.
+            {% if not listing.is_open_for_bids %}
+                <h6 style="color: orange">Closed for bidding</h6>
+            {% endif %}
         {% else %}
         <h5>Minimal bid: ${{ listing.start_bid }}</h5>
         No bids made yet        
@@ -36,13 +43,24 @@
         </p>
     </div>
     
-    {% if user.id %}
+    {% if user.id and user.id is not listing.listed_by.id and listing.is_open_for_bids %}
     <div>
         <form action="{% url 'listing' listing.id %}" method="post">
             {% csrf_token %}
             {{ form.value }} 
             <p>
                 <input type="submit">
+            </p>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if user.id is listing.listed_by.id and listing.is_open_for_bids %}
+    <div>
+        <form action="{% url 'close' listing.id %}" method="post">
+            {% csrf_token %}
+            <p>
+                <input type="submit" value="Close bidding">
             </p>
         </form>
     </div>

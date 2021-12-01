@@ -204,6 +204,15 @@ def toggle_watchlist(request, listing_id):
 
     return HttpResponseRedirect(reverse("listing", args=(listing_id)))
 
+def close(request, listing_id):
+    if request.method == "POST":
+        # check if the user is authorized to close the bidding
+        if request.user == Auction_listing.objects.get(id=listing_id).listed_by:
+            listing = Auction_listing.objects.get(id=listing_id)
+            listing.is_open_for_bids = False
+            listing.save()
+    return HttpResponseRedirect(reverse("listing", args=(listing_id)))
+
 def categories_list(request):
     cats = set()
     for listing in Auction_listing.objects.filter():
@@ -220,8 +229,8 @@ def categories(request, category):
     for listing in Auction_listing.objects.filter():
         highest_bids.append(Bid.objects.filter(bid_on_id=listing.id).order_by("value").last())
         if listing.category == category:
-            listings.append(listing)        
-    
+            listings.append(listing)
+
     return render(request, "auctions/categories.html", {
         "listings": listings,
         "category": category,
