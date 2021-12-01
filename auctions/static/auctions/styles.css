@@ -1,3 +1,9 @@
 body {
-    padding: 10px;
+    padding-left: 10%;
+    padding-right: 10%;
+    background-color: slategrey;
+}
+
+a {
+    color: darkred;
 }

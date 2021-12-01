@@ -179,16 +179,23 @@ def comment(request, listing_id):
     return HttpResponseRedirect(reverse("listing", args=(listing_id)))
 
 def watchlist(request):
-    highest_bids = []
-    for listing in Auction_listing.objects.filter():
-        highest_bids.append(Bid.objects.filter(bid_on_id=listing.id).order_by("value").last())
-
     # send the listings that are on the watchlist
     listings = Watchlist.objects.filter(watchlisted_by_id=request.user.id)
 
+    highest_bids = []
+    highest_bids_ids = []
+    for listing in listings:
+        print(listing)
+        high_bid = Bid.objects.filter(bid_on_id=listing.watchlisted_item_id).order_by("value").last()
+        print(high_bid)
+        if high_bid:
+            highest_bids.append(high_bid)
+            highest_bids_ids.append(high_bid.bid_on_id)
+
     return render(request, "auctions/watchlist.html", {
         "listings": listings,
-        "highest_bids": highest_bids
+        "highest_bids": highest_bids,
+        "highest_bids_ids": highest_bids_ids
     })
 
 def toggle_watchlist(request, listing_id):

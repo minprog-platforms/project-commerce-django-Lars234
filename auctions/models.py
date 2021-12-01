@@ -23,7 +23,7 @@ class Watchlist(models.Model):
     watchlisted_item = models.ForeignKey(Auction_listing, on_delete=models.CASCADE, related_name="item")
 
     def __str__(self):
-        return f"{self.item} watchlisted by {self.watchlisted_by}"
+        return f"{self.watchlisted_item} watchlisted by {self.watchlisted_by}"
 
 class Bid(models.Model):
     value = models.DecimalField(decimal_places=2, max_digits=16)

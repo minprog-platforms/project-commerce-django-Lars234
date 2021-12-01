@@ -4,7 +4,7 @@
     <h2>Watchlist</h2>
     <ul class="list-group">
     {% for listing in listings %}
-        <div class="card" style="width:250px">
+        <div class="card text-black bg-secondary mb-3" style="width:250px">
             {% if listing.watchlisted_item.image %}
                 <img class="card-img-left" src="{{ listing.watchlisted_item.image }}" alt="image of listing">
             {% else %}
@@ -16,10 +16,15 @@
                 <p class="card-text">
                     Current price: $
                     {% for bid in highest_bids %}
-                        {% if bid.bid_on_id == listing.watchlisted_item.id %}
-                            {{ bid.value }}
-                        {% endif %} 
+                        {% if bid.bid_on_id == listing.id %}
+                            {% if bid.value %}
+                                {{ bid.value }}
+                            {% endif %}
+                        {% endif %}
                     {% endfor %}
+                    {% if not listing.watchlisted_item.id in highest_bids_ids  %}
+                        {{ listing.watchlisted_item.start_bid }}
+                    {% endif %}
                 </p>
                 <a href="/listing/{{ listing.watchlisted_item.id }}" class="btn btn-primary">See listing</a>
             </div>
