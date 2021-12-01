@@ -4,7 +4,7 @@
     <h2>Listings with category: {{ category }}</h2>
     <ul class="list-group">
     {% for listing in listings %}
-    {% if listing.watchlisted_item.is_open_for_bids %}
+    {% if listing.is_open_for_bids %}
         <div class="card text-black bg-secondary mb-3" style="width:250px">
             {% if listing.image %}
                 <img class="card-img-left" src="{{ listing.image }}" alt="image of listing">
@@ -17,13 +17,13 @@
                 <p class="card-text">
                     Current price: $
                     {% for bid in highest_bids %}
-                        {% if bid.bid_on_id == listing.watchlisted_item.id %}
+                        {% if bid.bid_on_id == listing.id %}
                             {% if bid.value %}
                                 {{ bid.value }}
                             {% endif %}
                         {% endif %}
                     {% endfor %}
-                    {% if not listing.watchlisted_item.id in highest_bids_ids  %}
+                    {% if not listing.id in highest_bids_ids  %}
                         {{ listing.start_bid }}
                     {% endif %}
                 </p>
